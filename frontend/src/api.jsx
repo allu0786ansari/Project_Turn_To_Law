@@ -31,9 +31,17 @@ export const uploadDocument = async (file) => {
 
 // Ask question
 export const askQuestion = async (documentId, question) => {
+  const formData = new FormData();
+  formData.append("file_name", documentId); // ✅ Backend expects file_name, not documentId
+  formData.append("question", question);
+
   try {
-    const response = await api.post("/qna", { documentId, question });
-    return response.data; // Returns generated response
+    const response = await api.post("/qna/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // ✅ Must send as FormData
+      },
+    });
+    return response.data; // Returns { question, answer, source }
   } catch (error) {
     console.error("Q&A request failed:", error);
     throw error;
@@ -41,10 +49,17 @@ export const askQuestion = async (documentId, question) => {
 };
 
 // Fact-checking
-export const factCheck = async (text) => {
+export const factCheck = async (claim) => {
+  const formData = new FormData();
+  formData.append("claim", claim); // ✅ Backend expects claim, not text
+
   try {
-    const response = await api.post("/fact-check", { text });
-    return response.data.result; // Returns fact-check result
+    const response = await api.post("/fact-check/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data; // Returns fact-check result
   } catch (error) {
     console.error("Fact-check request failed:", error);
     throw error;

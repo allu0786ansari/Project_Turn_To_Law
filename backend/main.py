@@ -4,6 +4,8 @@ from news import get_indian_legal_news
 from db import initialize_db
 from fact_check import fact_check_legal_claim
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from uuid import uuid4
 import os
 
@@ -42,10 +44,15 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         return {"error": str(e)}
 
-@app.post("/ask/")
-async def ask_question(file_name: str = Form(...), question: str = Form(...)):
-    """Ask a question about an uploaded document."""
-    return query_document(file_name, question)
+class QnARequest(BaseModel):
+    documentId: str
+    question: str
+
+
+@app.post("/qna")
+async def ask_qna(request: QnARequest):
+    response = query_document(request.documentId, request.question)
+    return response
 
 @app.get("/news/")
 def get_legal_news():

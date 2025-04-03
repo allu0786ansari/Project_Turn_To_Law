@@ -1,12 +1,11 @@
 import { useState } from "react";
 import "../styles/FileUpload.css";
 
-const FileUpload = () => {
+const FileUpload = ({ onFileUpload }) => {  // Accept prop to pass documentId
     const [file, setFile] = useState(null);
-    const [documentId, setDocumentId] = useState(null); // Store document ID after upload
+    const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
-    const [loading, setLoading] = useState(false);
 
     const showMessage = (msg, type) => {
         setMessage(msg);
@@ -16,18 +15,14 @@ const FileUpload = () => {
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
-            const allowedTypes = [
-                "application/pdf",
-                "application/msword",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            ];
+            const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
             if (!allowedTypes.includes(selectedFile.type)) {
                 showMessage("Invalid file type. Please upload a PDF or DOC file.", "error");
                 setFile(null);
                 return;
             }
             setFile(selectedFile);
-            setMessage(""); // Clear message when file is changed
+            setMessage("");
         }
     };
 
@@ -51,13 +46,15 @@ const FileUpload = () => {
             });
 
             const data = await response.json();
-            console.log("Response Data:", data); // Debugging step
+            console.log("Response Data:", data); // Debugging
 
             if (response.ok) {
                 if (data.document_id) {
-                    setDocumentId(data.document_id); // ✅ Store document ID in state
                     showMessage(`Success! Document ID: ${data.document_id}`, "success");
                     console.log("Document ID:", data.document_id);
+                    
+                    // 🔹 Pass documentId to the parent component
+                    onFileUpload(data);
                 } else {
                     showMessage("Success! But document ID is missing.", "warning");
                 }
@@ -91,16 +88,6 @@ const FileUpload = () => {
 
                 {message && <div className={`message ${messageType}`}>{message}</div>}
             </form>
-
-            {/* Show Generate Response button after document is uploaded */}
-            {documentId && (
-                <button
-                    className="generate-btn"
-                    onClick={() => console.log("Generating response for", documentId)}
-                >
-                    Generate Response
-                </button>
-            )}
         </div>
     );
 };
