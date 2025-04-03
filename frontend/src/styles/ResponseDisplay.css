@@ -1,0 +1,35 @@
+.response-container {
+  padding: 1rem;
+  border: 1px solid #e5e7eb; /* Tailwind's gray-200 */
+  border-radius: 0.5rem;
+  background-color: #f3f4f6; /* Tailwind's gray-100 */
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.response-error {
+  color: #dc2626; /* Tailwind's red-600 */
+}
+
+.response-content h3 {
+  font-size: 1.125rem;
+  font-weight: bold;
+}
+
+.response-source,
+.response-confidence {
+  margin-top: 0.5rem;
+}
+
+.response-source h4,
+.response-confidence h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151; /* Tailwind's gray-700 */
+}
+
+.response-source p,
+.response-confidence p {
+  font-size: 0.875rem;
+  color: #6b7280; /* Tailwind's gray-500 */
+}

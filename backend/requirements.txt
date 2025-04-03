@@ -13,3 +13,5 @@ sentence-transformers
 beautifulsoup4
 lxml
 feedparser
+pillow
+pytesseract

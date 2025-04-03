@@ -10,70 +10,57 @@ const api = axios.create({
   },
 });
 
-// Upload document
+// ✅ Upload Document
 export const uploadDocument = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    
-    try {
-      const response = await api.post("/upload/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Override default JSON headers
-        },
-      });
-      return response.data; // Returns document ID
-    } catch (error) {
-      console.error("File upload failed:", error);
-      throw error;
-    }
-  };
-  
-
-// Ask question
-export const askQuestion = async (documentId, question) => {
   const formData = new FormData();
-  formData.append("file_name", documentId); // ✅ Backend expects file_name, not documentId
-  formData.append("question", question);
+  formData.append("file", file);
 
   try {
-    const response = await api.post("/qna/", formData, {
+    const response = await api.post("/upload/", formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // ✅ Must send as FormData
+        "Content-Type": "multipart/form-data", // Override default JSON headers
       },
+    });
+    return response.data; // Returns { document_id, message, content }
+  } catch (error) {
+    console.error("File upload failed:", error);
+    throw new Error("Failed to upload the document. Please try again.");
+  }
+};
+
+// ✅ Ask Question (Q&A)
+export const askQuestion = async (question, documentText) => {
+  try {
+    const response = await api.post("/qna/", {
+      question,
+      document_text: documentText, // Backend expects document_text
     });
     return response.data; // Returns { question, answer, source }
   } catch (error) {
     console.error("Q&A request failed:", error);
-    throw error;
+    throw new Error("Failed to get an answer. Please try again.");
   }
 };
 
-// Fact-checking
+// ✅ Fact-Checking
 export const factCheck = async (claim) => {
-  const formData = new FormData();
-  formData.append("claim", claim); // ✅ Backend expects claim, not text
-
   try {
-    const response = await api.post("/fact-check/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data; // Returns fact-check result
+    const response = await api.post("/fact-check/", { claim }); // Backend expects JSON
+    return response.data; // Returns { claim, verified_sources, confidence_score }
   } catch (error) {
     console.error("Fact-check request failed:", error);
-    throw error;
+    throw new Error("Failed to fact-check the claim. Please try again.");
   }
 };
 
-// Fetch legal news
+// ✅ Fetch Legal News
 export const getNewsFeed = async () => {
   try {
-    const response = await api.get("/news");
-    return response.data; // Returns news articles
+    const response = await api.get("/news/");
+    return response.data.news; // Returns an array of news articles
   } catch (error) {
     console.error("News fetch failed:", error);
-    throw error;
+    throw new Error("Failed to fetch legal news. Please try again.");
   }
 };
 

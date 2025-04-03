@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import time
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from config import GOOGLE_API_KEY, CACHE_EXPIRY
 
 genai.configure(api_key=GOOGLE_API_KEY)
@@ -15,6 +16,38 @@ CACHE_FILE = "news_cache.json"
 # Google News RSS Feed for Indian Legal News
 INDIAN_LEGAL_NEWS_FEED = "https://news.google.com/rss/search?q=legal+India"
 
+# List of scraping sources
+SCRAPING_SOURCES = [
+    {
+        "name": "LiveLaw",
+        "url": "https://www.livelaw.in/",
+        "article_selector": "div.news-card",
+        "title_selector": "h2",
+        "link_selector": "a",
+        "summary_selector": "div.news-card-content",
+        "base_url": "",
+    },
+    {
+        "name": "Bar & Bench",
+        "url": "https://www.barandbench.com/",
+        "article_selector": "div.article-listing",
+        "title_selector": "h3",
+        "link_selector": "a",
+        "summary_selector": "p",
+        "base_url": "https://www.barandbench.com",
+    },
+    {
+        "name": "The Hindu",
+        "url": "https://www.thehindu.com/news/national/",
+        "article_selector": "div.story-card",
+        "title_selector": "h2",
+        "link_selector": "a",
+        "summary_selector": "p",
+        "base_url": "",
+    },
+]
+
+
 def load_cache():
     """Load news cache from file."""
     if os.path.exists(CACHE_FILE):
@@ -24,11 +57,13 @@ def load_cache():
                 return cache_data["news"]
     return None
 
+
 def save_cache(news_articles):
     """Save news articles to cache."""
     cache_data = {"timestamp": time.time(), "news": news_articles}
     with open(CACHE_FILE, "w") as file:
         json.dump(cache_data, file)
+
 
 def fetch_google_news():
     """Fetch legal news from Google News RSS feed."""
@@ -46,62 +81,36 @@ def fetch_google_news():
         print(f"Error fetching Google News: {e}")
         return []
 
-def scrape_livelaw():
-    """Scrape latest legal news from LiveLaw (https://www.livelaw.in/)."""
+
+def scrape_source(source):
+    """Scrape a single news source."""
     try:
-        url = "https://www.livelaw.in/"
-        response = requests.get(url, timeout=5)
+        response = requests.get(source["url"], timeout=5)
         soup = BeautifulSoup(response.text, "html.parser")
 
         articles = []
-        for item in soup.find_all("div", class_="news-card")[:5]:
-            title = item.find("h2").text.strip()
-            link = item.find("a")["href"]
-            summary = item.find("div", class_="news-card-content").text.strip()
-            articles.append({"title": title, "content": summary, "link": link})
+        for item in soup.find_all(source["article_selector"])[:5]:
+            title = item.find(source["title_selector"]).text.strip()
+            link = item.find(source["link_selector"])["href"]
+            summary = item.find(source["summary_selector"]).text.strip() if item.find(source["summary_selector"]) else "No summary available."
+            full_link = source["base_url"] + link if source["base_url"] else link
+            articles.append({"title": title, "content": summary, "link": full_link})
 
         return articles
     except Exception as e:
-        print(f"Error scraping LiveLaw: {e}")
+        print(f"Error scraping {source['name']}: {e}")
         return []
 
-def scrape_bar_and_bench():
-    """Scrape latest legal news from Bar & Bench (https://www.barandbench.com/)."""
-    try:
-        url = "https://www.barandbench.com/"
-        response = requests.get(url, timeout=5)
-        soup = BeautifulSoup(response.text, "html.parser")
 
-        articles = []
-        for item in soup.find_all("div", class_="article-listing")[:5]:
-            title = item.find("h3").text.strip()
-            link = item.find("a")["href"]
-            summary = item.find("p").text.strip()
-            articles.append({"title": title, "content": summary, "link": "https://www.barandbench.com" + link})
+def scrape_all_sources():
+    """Scrape all configured news sources."""
+    articles = []
+    with ThreadPoolExecutor() as executor:
+        results = executor.map(scrape_source, SCRAPING_SOURCES)
+        for result in results:
+            articles.extend(result)
+    return articles
 
-        return articles
-    except Exception as e:
-        print(f"Error scraping Bar & Bench: {e}")
-        return []
-
-def scrape_the_hindu():
-    """Scrape latest legal news from The Hindu (https://www.thehindu.com/)."""
-    try:
-        url = "https://www.thehindu.com/news/national/"
-        response = requests.get(url, timeout=5)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        articles = []
-        for item in soup.find_all("div", class_="story-card")[:5]:
-            title = item.find("h2").text.strip()
-            link = item.find("a")["href"]
-            summary = item.find("p").text.strip() if item.find("p") else "No summary available."
-            articles.append({"title": title, "content": summary, "link": link})
-
-        return articles
-    except Exception as e:
-        print(f"Error scraping The Hindu: {e}")
-        return []
 
 def summarize_news(articles):
     """Use Gemini AI to summarize news articles."""
@@ -109,13 +118,14 @@ def summarize_news(articles):
     for article in articles:
         try:
             prompt = f"Summarize this legal news article:\n{article['content']}"
-            summary = genai.generate_text(prompt=prompt).text
+            response = genai.generate_text(prompt=prompt)
+            summary = response.text if response and hasattr(response, "text") else "No summary available."
             summaries.append({"title": article["title"], "summary": summary, "link": article["link"]})
         except Exception as e:
             print(f"Error summarizing news: {e}")
             summaries.append({"title": article["title"], "summary": "Error in AI summarization.", "link": article["link"]})
-    
     return summaries
+
 
 def get_indian_legal_news():
     """Fetch and summarize legal news from multiple sources, using caching."""
@@ -123,12 +133,7 @@ def get_indian_legal_news():
     if cached_news:
         return cached_news
 
-    news_articles = (
-        fetch_google_news() +
-        scrape_livelaw() +
-        scrape_bar_and_bench() +
-        scrape_the_hindu()
-    )
+    news_articles = fetch_google_news() + scrape_all_sources()
     summarized_news = summarize_news(news_articles)
 
     save_cache(summarized_news)

@@ -1,14 +1,32 @@
-import { Link } from "react-router-dom";
-import '../styles/NavBar.css';
+import { NavLink } from "react-router-dom";
+import "../styles/NavBar.css";
 
 const Navbar = () => {
   return (
-    <nav className="bg-blue-600 p-4 text-white flex justify-between">
-      <h1 className="text-lg font-bold">Smart Legal Q&A</h1>
-      <div>
-        <Link className="px-4" to="/">Home</Link>
-        <Link className="px-4" to="/newsfeed">Newsfeed</Link>
-        <Link className="px-4" to="/about">About</Link>
+    <nav className="navbar">
+      <h1 className="navbar-title">Smart Legal Q&A</h1>
+      <div className="navbar-links">
+        <NavLink
+          to="/"
+          className={({ isActive }) => (isActive ? "active-link navbar-link" : "navbar-link")}
+          aria-label="Home"
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/newsfeed"
+          className={({ isActive }) => (isActive ? "active-link navbar-link" : "navbar-link")}
+          aria-label="Newsfeed"
+        >
+          Newsfeed
+        </NavLink>
+        <NavLink
+          to="/about"
+          className={({ isActive }) => (isActive ? "active-link navbar-link" : "navbar-link")}
+          aria-label="About"
+        >
+          About
+        </NavLink>
       </div>
     </nav>
   );

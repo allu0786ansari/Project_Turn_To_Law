@@ -1,32 +1,34 @@
 .navbar {
-    background-color: #333;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #2563eb; /* Tailwind's blue-600 */
+  color: white;
 }
 
-.navbar h1 {
-    color: white;
-    font-size: 20px;
+.navbar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
+.navbar-links {
+  display: flex;
+  gap: 1rem;
 }
 
-.nav-links li {
-    margin: 0 15px;
+.navbar-link {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
 }
 
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    font-size: 16px;
-    transition: color 0.3s;
+.navbar-link:hover {
+  color: #93c5fd; /* Tailwind's blue-300 */
 }
 
-.nav-links a:hover {
-    color: #007bff;
+.active-link {
+  border-bottom: 2px solid white;
+  font-weight: bold;
 }
