@@ -56,11 +56,12 @@ const FileUpload = ({ onFileUpload }) => {
       });
 
       const data = await response.json();
+      console.log("Backend response:", data);
 
       if (response.ok) {
         if (data.document_id) {
           showMessage(`Success! Document ID: ${data.document_id}`, "success");
-          onFileUpload(data); // Pass document details to parent component
+          onFileUpload(data); // Pass document details (including document_id) to parent component
         } else {
           showMessage("Success! But document ID is missing.", "warning");
         }
@@ -68,6 +69,7 @@ const FileUpload = ({ onFileUpload }) => {
         showMessage(`Error: ${data.detail || "Something went wrong"}`, "error");
       }
     } catch (error) {
+      console.error("File upload failed:", error);
       showMessage(`Error: ${error.message || "Network error"}`, "error");
     } finally {
       setLoading(false);
@@ -86,6 +88,8 @@ const FileUpload = ({ onFileUpload }) => {
             accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
             id="file-upload"
             onChange={handleFileChange}
+            disabled={loading} // Disable input during loading
+            aria-label="Choose a file to upload"
           />
           <label htmlFor="file-upload" className="custom-file-upload">
             Choose File
@@ -97,7 +101,11 @@ const FileUpload = ({ onFileUpload }) => {
           {loading ? <span className="spinner"></span> : "Upload Document"}
         </button>
 
-        {message && <div className={`message ${messageType}`}>{message}</div>}
+        {message && (
+          <div className={`message ${messageType}`} aria-live="polite">
+            {message}
+          </div>
+        )}
       </form>
     </div>
   );

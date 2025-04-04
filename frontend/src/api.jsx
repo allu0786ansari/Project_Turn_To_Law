@@ -29,13 +29,25 @@ export const uploadDocument = async (file) => {
 };
 
 // ✅ Ask Question (Q&A)
-export const askQuestion = async (question, documentText) => {
+export const askQuestion = async (question, documentId, documentText) => {
+  // Validate input before making the API call
+  if (!question || !documentId || !documentText) {
+    throw new Error("Invalid input: question, documentId, and documentText are required.");
+  }
+
   try {
+    console.log("Payload sent to /qna/ endpoint:", {
+      question,
+      document_id: documentId,
+      document_text: documentText,
+    });
+
     const response = await api.post("/qna/", {
       question,
-      document_text: documentText, // Backend expects document_text
+      document_id: documentId, // Pass the document ID
+      document_text: documentText, // Pass the document content
     });
-    return response.data; // Returns { question, answer, source }
+    return response.data; // Returns { question, answer, source, document_id }
   } catch (error) {
     console.error("Q&A request failed:", error);
     throw new Error("Failed to get an answer. Please try again.");

@@ -4,6 +4,7 @@ import { askQuestion, factCheck } from "../api"; // API functions
 import "../styles/home.css";
 
 const Home = () => {
+  const [documentId, setDocumentId] = useState(""); // Store the document ID
   const [documentText, setDocumentText] = useState(""); // Extracted text from uploaded file
   const [messages, setMessages] = useState([]); // Chat history
   const [input, setInput] = useState(""); // User input
@@ -12,7 +13,15 @@ const Home = () => {
 
   // Handle sending a question
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim()) {
+      setError("Please enter a valid question.");
+      return;
+    }
+
+    if (!documentId || !documentText) {
+      setError("Please upload a document before asking a question.");
+      return;
+    }
 
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]); // Add user message to chat
@@ -21,7 +30,9 @@ const Home = () => {
     setError(null);
 
     try {
-      const response = await askQuestion(input, documentText); // Call Q&A API
+      console.log("Sending Q&A request:", { question: input, documentId, documentText });
+
+      const response = await askQuestion(input, documentId, documentText); // Call Q&A API
       const aiMessage = { role: "ai", content: response.response };
       setMessages((prev) => [...prev, aiMessage]); // Add AI response to chat
     } catch (err) {
@@ -41,6 +52,8 @@ const Home = () => {
       setError(null);
 
       try {
+        console.log("Sending fact-check request for:", lastMessage.content);
+
         const factCheckResult = await factCheck(lastMessage.content); // Call fact-check API
         const factCheckMessage = {
           role: "fact-check",
@@ -53,6 +66,8 @@ const Home = () => {
       } finally {
         setLoading(false);
       }
+    } else {
+      setError("No AI response available to validate.");
     }
   };
 
@@ -63,6 +78,8 @@ const Home = () => {
       {/* File Upload Section */}
       <FileUpload
         onFileUpload={(data) => {
+          console.log("File uploaded successfully:", data); // Debugging log
+          setDocumentId(data.document_id); // Set the document ID from the backend response
           setDocumentText(data.content); // Set extracted text from uploaded file
           setMessages([]); // Clear chat history when a new file is uploaded
         }}
@@ -74,7 +91,13 @@ const Home = () => {
           {messages.map((msg, idx) => (
             <div
               key={idx}
-              className={`chat-message ${msg.role === "user" ? "user-message" : msg.role === "ai" ? "ai-message" : "fact-check-message"}`}
+              className={`chat-message ${
+                msg.role === "user"
+                  ? "user-message"
+                  : msg.role === "ai"
+                  ? "ai-message"
+                  : "fact-check-message"
+              }`}
             >
               {msg.content}
             </div>
