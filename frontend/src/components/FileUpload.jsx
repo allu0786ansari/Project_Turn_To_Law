@@ -19,15 +19,14 @@ const FileUpload = ({ onFileUpload }) => {
     if (selectedFile) {
       const allowedTypes = [
         "application/pdf",
-        "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "text/plain",
+        "application/msword",
         "image/png",
         "image/jpeg",
         "image/jpg",
       ];
       if (!allowedTypes.includes(selectedFile.type)) {
-        showMessage("Invalid file type. Please upload a valid document or image.", "error");
+        showMessage("Invalid file type. Please upload a PDF, DOCX, or image file.", "error");
         setFile(null);
         return;
       }
@@ -79,13 +78,13 @@ const FileUpload = ({ onFileUpload }) => {
   return (
     <div className="upload-container">
       <h2>Upload Your Document</h2>
-      <p>Upload a PDF, DOC, TXT, or image file to analyze</p>
+      <p>Upload a PDF, DOCX, or image file to analyze</p>
 
       <form onSubmit={handleSubmit}>
         <div className="file-input">
           <input
             type="file"
-            accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
             id="file-upload"
             onChange={handleFileChange}
             disabled={loading} // Disable input during loading

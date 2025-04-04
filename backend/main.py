@@ -1,9 +1,8 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import List, Optional
 import os
-import mimetypes
-import uuid  # Import uuid for generating unique filenames
 
 # Import necessary modules
 from qna import process_document, query_document  # Q&A functionalities
@@ -82,13 +81,20 @@ async def ask_qna(request: QnARequest):
         raise HTTPException(status_code=500, detail=f"Error during Q&A: {str(e)}")
 
 @app.get("/news/")
-def get_legal_news():
+def get_legal_news(keywords: Optional[List[str]] = Query(None)):
     """
     Fetches the latest Indian legal news summaries.
+    Optionally filters news based on provided keywords.
     """
     try:
-        news = get_indian_legal_news()
+        print(f"Fetching legal news with keywords: {keywords}")
+        news = get_indian_legal_news(keywords=keywords)
+        if not news:
+            raise HTTPException(status_code=404, detail="No legal news found.")
         return {"news": news}
+    except HTTPException as http_exc:
+        print(f"HTTP Exception: {http_exc.detail}")
+        raise http_exc  # Re-raise HTTP exceptions
     except Exception as e:
         print(f"Error fetching legal news: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching legal news: {str(e)}")
@@ -105,16 +111,15 @@ async def fact_check(request: FactCheckRequest):
     try:
         print("Received Fact-Check request:", request.dict())  # Debugging log
 
+        # Call the fact_check_legal_claim function from fact_check.py
         response = fact_check_legal_claim(request.claim)
 
+        # Check if the response contains an error
         if "error" in response:
             return {"response": response["error"]}
 
-        return {
-            "claim": request.claim,
-            "verified_sources": response["verified_sources"],
-            "confidence_score": response.get("confidence_score", 0),
-        }
+        # Return the full response from fact_check_legal_claim
+        return response
     except Exception as e:
         print(f"Error during fact-checking: {e}")
         raise HTTPException(status_code=500, detail=f"Error during fact-checking: {str(e)}")

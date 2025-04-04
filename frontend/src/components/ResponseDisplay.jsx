@@ -1,7 +1,7 @@
 const ResponseDisplay = ({ response }) => {
   if (!response) return null; // ✅ Don't render if no response
 
-  const { answer, source, error, confidence_score } = response;
+  const { answer, source, error, confidence_score, document_id } = response;
 
   return (
     <div className="response-container p-4 border rounded shadow bg-gray-100 mt-4">
@@ -26,6 +26,13 @@ const ResponseDisplay = ({ response }) => {
             <div className="response-confidence mt-2">
               <h4 className="font-semibold">Confidence Score:</h4>
               <p className="text-sm text-gray-700">{confidence_score}</p>
+            </div>
+          )}
+
+          {document_id && (
+            <div className="response-document-id mt-2">
+              <h4 className="font-semibold">Document ID:</h4>
+              <p className="text-sm text-gray-700">{document_id}</p>
             </div>
           )}
         </div>

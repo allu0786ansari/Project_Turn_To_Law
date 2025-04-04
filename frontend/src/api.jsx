@@ -55,25 +55,49 @@ export const askQuestion = async (question, documentId, documentText) => {
 };
 
 // ✅ Fact-Checking
-export const factCheck = async (claim) => {
+export const factCheck = async (aiResponse, documentId) => {
   try {
-    const response = await api.post("/fact-check/", { claim }); // Backend expects JSON
-    return response.data; // Returns { claim, verified_sources, confidence_score }
+    const response = await fetch("http://localhost:8000/fact-check/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        claim: aiResponse, // The AI-generated response to validate
+        document_id: documentId, // The document ID for context
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Failed to fact-check the response.");
+    }
+
+    const data = await response.json();
+    return data; // Return the fact-check results
   } catch (error) {
-    console.error("Fact-check request failed:", error);
-    throw new Error("Failed to fact-check the claim. Please try again.");
+    console.error("Error in fact-check API call:", error);
+    throw error; // Rethrow the error for the component to handle
   }
 };
 
 // ✅ Fetch Legal News
-export const getNewsFeed = async () => {
+export const getNewsFeed = async (keywords = []) => {
   try {
-    const response = await api.get("/news/");
-    return response.data.news; // Returns an array of news articles
+    console.log("Fetching news with keywords:", keywords);
+
+    const response = await api.get("/news/", {
+      params: { keywords }, // Pass keywords as query parameters
+    });
+
+    if (!response.data || !response.data.news) {
+      throw new Error("No news data found in the response.");
+    }
+
+    return response.data.news; // Return the news data
   } catch (error) {
     console.error("News fetch failed:", error);
-    throw new Error("Failed to fetch legal news. Please try again.");
+    throw new Error(error.response?.data?.detail || "Failed to fetch legal news. Please try again.");
   }
 };
-
 export default api;

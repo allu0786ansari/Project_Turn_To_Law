@@ -6,6 +6,8 @@ import uuid
 from fastapi import UploadFile
 import pypdf
 import docx
+from PIL import Image
+import pytesseract  # For OCR
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import google.generativeai as genai
@@ -25,6 +27,9 @@ faiss_index = faiss.IndexFlatL2(embedding_dim)
 UPLOAD_DIR = "uploaded_docs/"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+# Set the path to the Tesseract executable
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 
 def save_file(uploaded_file: UploadFile, doc_id: str) -> str:
     """Save uploaded file to the server with a unique document ID prefix."""
@@ -41,7 +46,7 @@ def save_file(uploaded_file: UploadFile, doc_id: str) -> str:
 
 
 def extract_text(file_path: str) -> str:
-    """Extract text from PDF or DOCX."""
+    """Extract text from PDF, DOCX, or image files."""
     ext = file_path.split(".")[-1].lower()
     extracted_text = ""
 
@@ -56,8 +61,11 @@ def extract_text(file_path: str) -> str:
         elif ext == "docx":
             doc = docx.Document(file_path)
             extracted_text = "\n".join([para.text for para in doc.paragraphs if para.text.strip()])
+        elif ext in ["png", "jpg", "jpeg"]:
+            image = Image.open(file_path)
+            extracted_text = pytesseract.image_to_string(image)  # Perform OCR on the image
         else:
-            raise ValueError("Unsupported file format. Please upload a PDF or DOCX.")
+            raise ValueError("Unsupported file format. Please upload a PDF, DOCX, or image file.")
 
         # Check if extracted text is empty
         if not extracted_text.strip():

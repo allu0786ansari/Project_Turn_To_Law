@@ -1,31 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getNewsFeed } from "../api"; // Import the API function
 import "../styles/NewsFeed.css";
+import debounce from "lodash.debounce";
 
 const NewsFeed = () => {
   const [news, setNews] = useState([]); // State to store news articles
   const [loading, setLoading] = useState(true); // Track loading state
   const [error, setError] = useState(null); // Track error state
+  const [keywords, setKeywords] = useState(""); // State to store user-provided keywords
 
+  // Fetch news articles from the backend
+  const fetchNews = async (keywords = []) => {
+    setLoading(true);
+    setError(null); // Reset error state
+    try {
+      const newsData = await getNewsFeed(keywords); // Call the API function with keywords
+      setNews(newsData);
+    } catch (error) {
+      console.error("Failed to fetch news:", error);
+      setError(error.message || "Failed to fetch legal news. Please try again.");
+    } finally {
+      setLoading(false); // Reset loading state
+    }
+  };
+
+  // Stable debounce function
+  const debouncedFetchNews = useCallback(
+    debounce((keywords) => {
+      fetchNews(keywords);
+    }, 500), // 500ms debounce delay
+    [] // Empty dependency array ensures this function is stable
+  );
+
+  // Handle keyword search
+  const handleSearch = useCallback(() => {
+    const keywordArray = keywords.split(",").map((kw) => kw.trim()); // Split keywords by commas
+    debouncedFetchNews(keywordArray); // Use the stable debounced function
+  }, [keywords, debouncedFetchNews]); // Include dependencies
+
+  // Fetch news on component mount
   useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const newsData = await getNewsFeed(); // Call the API function
-        setNews(newsData);
-      } catch (error) {
-        console.error("Failed to fetch news:", error);
-        setError("Failed to fetch legal news. Please try again later.");
-      } finally {
-        setLoading(false); // Reset loading state
-      }
-    };
-
-    fetchNews();
-  }, []);
+    fetchNews(); // Fetch all news by default
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   return (
     <div className="news-feed-container">
       <h2 className="news-feed-title">Latest Legal News</h2>
+
+      {/* Keyword Search */}
+      <div className="news-feed-search">
+        <input
+          type="text"
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          placeholder="Enter keywords (e.g., Supreme Court, IPC)"
+          className="news-feed-input"
+          aria-label="Keyword search input"
+        />
+        <button onClick={handleSearch} className="news-feed-button" aria-label="Search news">
+          Search
+        </button>
+      </div>
 
       {/* Loading State */}
       {loading && <p className="news-feed-loading">Loading news...</p>}
