@@ -82,22 +82,16 @@ async def ask_qna(request: QnARequest):
 
 @app.get("/news/")
 def get_legal_news(keywords: Optional[List[str]] = Query(None)):
-    """
-    Fetches the latest Indian legal news summaries.
-    Optionally filters news based on provided keywords.
-    """
+    """Fetches the latest Indian legal news summaries."""
     try:
         print(f"Fetching legal news with keywords: {keywords}")
-        news = get_indian_legal_news(keywords=keywords)
-        if not news:
-            raise HTTPException(status_code=404, detail="No legal news found.")
-        return {"news": news}
-    except HTTPException as http_exc:
-        print(f"HTTP Exception: {http_exc.detail}")
-        raise http_exc  # Re-raise HTTP exceptions
+        # Filter out empty keywords
+        filtered_keywords = [k for k in (keywords or []) if k and k.strip()]
+        news = get_indian_legal_news(keywords=filtered_keywords)
+        return {"news": news or []}
     except Exception as e:
         print(f"Error fetching legal news: {e}")
-        raise HTTPException(status_code=500, detail=f"Error fetching legal news: {str(e)}")
+        return {"news": []}
 
 # ✅ Request Model for Fact-Checking
 class FactCheckRequest(BaseModel):
