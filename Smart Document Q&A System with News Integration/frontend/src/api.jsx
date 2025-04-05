@@ -87,17 +87,23 @@ export const getNewsFeed = async (keywords = []) => {
     console.log("Fetching news with keywords:", keywords);
 
     const response = await api.get("/news/", {
-      params: { keywords }, // Pass keywords as query parameters
+      params: { 
+        keywords: Array.isArray(keywords) ? keywords.filter(k => k.trim()) : []
+      },
     });
 
-    if (!response.data || !response.data.news) {
-      throw new Error("No news data found in the response.");
+    if (!response.data) {
+      console.log("No data received from server");
+      return [];
     }
 
-    return response.data.news; // Return the news data
+    const news = response.data.news || [];
+    console.log("Received news articles:", news.length);
+    return news;
+
   } catch (error) {
     console.error("News fetch failed:", error);
-    throw new Error(error.response?.data?.detail || "Failed to fetch legal news. Please try again.");
+    return [];  // Return empty array instead of throwing error
   }
 };
 export default api;
