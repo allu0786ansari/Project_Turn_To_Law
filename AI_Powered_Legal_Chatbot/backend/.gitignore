@@ -130,6 +130,8 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.lcaht
+lcaht/
 env/
 venv/
 ENV/
