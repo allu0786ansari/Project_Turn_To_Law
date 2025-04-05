@@ -72,8 +72,8 @@ These components are orchestrated through an agentic framework, allowing them to
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/smart-doc-qa.git
-cd smart-doc-qa
+https://github.com/allu0786ansari/Project_Turn_To_Law.git
+cd Smart_Document_QA_System
 ```
 
 ### Backend Setup
