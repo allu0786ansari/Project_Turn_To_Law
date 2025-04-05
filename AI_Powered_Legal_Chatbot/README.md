@@ -3,9 +3,9 @@
 A Retrieval-Augmented Generation (RAG) based legal assistant chatbot that provides accurate legal information and preliminary guidance to users based on Indian legal codes, precedents, and regulations.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
-![React](https://img.shields.io/badge/react-18.0+-blue.svg)
-![FastAPI](https://img.shields.io/badge/fastapi-0.100.0+-blue.svg)
+![Python](https://img.shields.io/badge/python-blue.svg)
+![React](https://img.shields.io/badge/react-blue.svg)
+![FastAPI](https://img.shields.io/badge/fastapi-blue.svg)
 
 ## 📋 Table of Contents
 
