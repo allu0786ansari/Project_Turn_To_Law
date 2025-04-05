@@ -73,8 +73,8 @@ The project uses a RAG (Retrieval-Augmented Generation) architecture:
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/indian-legal-assistant.git
-cd indian-legal-assistant
+https://github.com/allu0786ansari/Project_Turn_To_Law.git
+cd AI_Powered_Legal_Chatbot
 ```
 
 ### Backend Setup
