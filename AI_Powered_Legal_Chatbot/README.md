@@ -219,12 +219,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Created by Allaudin Ansari - feel free to contact me at allu456654ansari@gmail.com!
 
 ## Demo
-
-### User Interface
-![Chatbot Interface](./docs/images/chatbot-interface.png)
-
-### Response Example
-![Legal Response](./docs/images/legal-response-example.png)
+![Chatbot Interface](https://github.com/allu0786ansari/Project_Turn_To_Law/blob/main/AI_Powered_Legal_Chatbot/backend/Demo_Legal_Chatbot.png)
 
 
 ### Demo Video
