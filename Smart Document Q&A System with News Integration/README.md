@@ -185,7 +185,7 @@ smart_doc_qa/
 ## 🎬 Demo
 
 ### System Interface
-![System Interface](./docs/images/interface-screenshot.png)
+![System Interface](https://github.com/allu0786ansari/Project_Turn_To_Law/blob/main/Smart%20Document%20Q%26A%20System%20with%20News%20Integration/backend/models/Q%26A%20Session.png)
 
 ### Document Query Demo
 ![Document Query](./docs/images/query-demo.gif)
