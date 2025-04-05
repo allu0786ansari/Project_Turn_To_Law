@@ -1,53 +1,73 @@
-import { useEffect, useState, useCallback } from "react";
-import { getNewsFeed } from "../api"; // Import the API function
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { getNewsFeed } from "../api";
 import "../styles/NewsFeed.css";
 import debounce from "lodash.debounce";
 
 const NewsFeed = () => {
-  const [news, setNews] = useState([]); // State to store news articles
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [error, setError] = useState(null); // Track error state
-  const [keywords, setKeywords] = useState(""); // State to store user-provided keywords
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [keywords, setKeywords] = useState("");
 
-  // Fetch news articles from the backend
-  const fetchNews = async (keywords = []) => {
+  // Memoize the fetchNews function to prevent unnecessary recreations
+  const fetchNews = useCallback(async (searchKeywords = []) => {
     setLoading(true);
-    setError(null); // Reset error state
+    setError(null);
     try {
-      const newsData = await getNewsFeed(keywords); // Call the API function with keywords
-      setNews(newsData);
+      const newsData = await getNewsFeed(searchKeywords);
+      setNews(Array.isArray(newsData) ? newsData : []);
     } catch (error) {
       console.error("Failed to fetch news:", error);
       setError(error.message || "Failed to fetch legal news. Please try again.");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
-  };
+  }, []);
 
-  // Stable debounce function
-  const debouncedFetchNews = useCallback(
-    debounce((keywords) => {
-      fetchNews(keywords);
-    }, 500), // 500ms debounce delay
-    [] // Empty dependency array ensures this function is stable
+  // Create a stable debounced function using useMemo
+  const debouncedFetchNews = useMemo(
+    () =>
+      debounce((searchKeywords) => {
+        fetchNews(searchKeywords);
+      }, 500),
+    [fetchNews]
   );
 
-  // Handle keyword search
-  const handleSearch = useCallback(() => {
-    const keywordArray = keywords.split(",").map((kw) => kw.trim()); // Split keywords by commas
-    debouncedFetchNews(keywordArray); // Use the stable debounced function
-  }, [keywords, debouncedFetchNews]); // Include dependencies
-
-  // Fetch news on component mount
+  // Cleanup debounce on unmount
   useEffect(() => {
-    fetchNews(); // Fetch all news by default
-  }, []); // Empty dependency array ensures this runs only once on mount
+    return () => {
+      debouncedFetchNews.cancel();
+    };
+  }, [debouncedFetchNews]);
+
+  // Handle keyword search with proper dependency tracking
+  const handleSearch = useCallback(() => {
+    if (!keywords.trim()) {
+      fetchNews([]); // Fetch all news if keywords are empty
+      return;
+    }
+    const keywordArray = keywords
+      .split(",")
+      .map((kw) => kw.trim())
+      .filter(Boolean); // Remove empty strings
+    debouncedFetchNews(keywordArray);
+  }, [keywords, debouncedFetchNews, fetchNews]);
+
+  // Auto-search when keywords change
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchNews();
+    return () => setNews([]); // Cleanup on unmount
+  }, [fetchNews]);
 
   return (
     <div className="news-feed-container">
       <h2 className="news-feed-title">Latest Legal News</h2>
 
-      {/* Keyword Search */}
       <div className="news-feed-search">
         <input
           type="text"
@@ -57,39 +77,49 @@ const NewsFeed = () => {
           className="news-feed-input"
           aria-label="Keyword search input"
         />
-        <button onClick={handleSearch} className="news-feed-button" aria-label="Search news">
-          Search
+        <button 
+          onClick={handleSearch} 
+          className="news-feed-button" 
+          aria-label="Search news"
+          disabled={loading}
+        >
+          {loading ? "Searching..." : "Search"}
         </button>
       </div>
 
-      {/* Loading State */}
       {loading && <p className="news-feed-loading">Loading news...</p>}
 
-      {/* Error State */}
-      {error && <p className="news-feed-error">{error}</p>}
-
-      {/* Empty State */}
-      {!loading && !error && news.length === 0 && (
-        <p className="news-feed-empty">No news articles available at the moment.</p>
+      {error && (
+        <p className="news-feed-error" role="alert">
+          {error}
+        </p>
       )}
 
-      {/* News Articles */}
-      {!loading &&
-        !error &&
-        news.map((article, idx) => (
-          <div key={idx} className="news-article">
-            <h3 className="news-article-title">{article.title}</h3>
-            <p className="news-article-summary">{article.summary}</p>
-            <a
-              href={article.link}
-              className="news-article-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Read more
-            </a>
-          </div>
-        ))}
+      {!loading && !error && news.length === 0 && (
+        <p className="news-feed-empty" role="status">
+          No news articles available at the moment.
+        </p>
+      )}
+
+      {!loading && !error && news.length > 0 && (
+        <div className="news-articles-container">
+          {news.map((article, idx) => (
+            <div key={article.link || idx} className="news-article">
+              <h3 className="news-article-title">{article.title}</h3>
+              <p className="news-article-summary">{article.summary}</p>
+              <a
+                href={article.link}
+                className="news-article-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Read more about ${article.title}`}
+              >
+                Read more
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
