@@ -21,6 +21,7 @@ A Retrieval-Augmented Generation (RAG) based legal assistant chatbot that provid
 - [Future Improvements](#future-improvements)
 - [Contributing](#contributing)
 - [License](#license)
+- [Demo](#Screenshot)
 
 ## 🔍 Overview
 
