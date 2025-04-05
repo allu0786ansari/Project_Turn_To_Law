@@ -1,0 +1,15 @@
+.app {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: aqua;
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+  margin: 10px 0;
+  color: #0b0be5;
+}
+

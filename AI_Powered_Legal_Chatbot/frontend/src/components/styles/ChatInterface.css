@@ -1,0 +1,13 @@
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border: 1px solid #3606e0;
+  border-radius: 8px;
+  background-color: black;
+  box-shadow: 0 4px 8px rgba(105, 112, 218, 0.1);
+  overflow: hidden;
+}

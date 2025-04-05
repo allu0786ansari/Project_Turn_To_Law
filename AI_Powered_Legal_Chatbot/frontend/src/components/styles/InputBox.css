@@ -1,0 +1,29 @@
+.input-box {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #7bc3c015;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d91616;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #0b11be;
+  color: black(228, 91, 91);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

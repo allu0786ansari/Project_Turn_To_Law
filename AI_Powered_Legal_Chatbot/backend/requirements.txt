@@ -1,0 +1,14 @@
+langchain 
+langchain-community 
+langchain-google-genai 
+python-dotenv 
+tqdm
+faiss-cpu
+groq
+langchain-groq
+PyPDF2
+streamlit
+pypdf
+fastapi
+uvicorn
+google-generative-ai
