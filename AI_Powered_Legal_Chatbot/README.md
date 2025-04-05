@@ -35,7 +35,6 @@ The chatbot aims to bridge the gap between complex legal information and individ
 - **Legal Citation**: Properly cite legal sources when providing information
 - **User-Friendly Interface**: Clean, intuitive chat interface for easy user interaction
 - **Safeguards**: Built-in measures to prevent incorrect legal advice and clear disclaimer system
-- **Multilingual Support**: Ability to handle queries in multiple Indian languages
 - **Conversation History**: Save and review previous interactions
 - **Document Reference**: Direct citations to relevant legal documents
 - **Responsive Design**: Works seamlessly across desktop and mobile devices
@@ -55,21 +54,20 @@ The project uses a RAG (Retrieval-Augmented Generation) architecture:
 ### Backend
 - FastAPI framework
 - LangChain for RAG pipeline
-- Vector database (FAISS/Chroma)
-- Large Language Model integration
-- Python 3.9+
+- Vector database (FAISS)
+- Large Language Model integration-Gemini
+- Python
 
 ### Frontend
-- React 18+
+- React
 - Vite build tool
-- Tailwind CSS for styling
+- CSS for styling
 - Axios for API requests
 
 ## 🚀 Installation and Setup
 
 ### Prerequisites
-- Python 3.9+
-- Node.js 16+
+- Python
 - npm or yarn
 - Git
 
@@ -102,7 +100,7 @@ cp .env.example .env
 ### Database Setup
 ```bash
 # Make sure you have the vector database files in the Database directory
-# If not, run the indexing script
+# If not, run the inference.py script
 cd backend
 python scripts/build_index.py
 ```
@@ -119,7 +117,7 @@ uvicorn app.main:app --reload
 ### Running the Frontend
 ```bash
 cd frontend
-npm run dev  # or yarn dev
+npm run dev  # or yarn dev/start
 ```
 
 Open your browser and navigate to `http://localhost:5173` to access the chatbot interface.
@@ -218,7 +216,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Created by Allaudin Ansari - feel free to contact me at [allu456654ansari@gmail.com]!
+Created by Allaudin Ansari - feel free to contact me at allu456654ansari@gmail.com!
 
 ## Demo
 
