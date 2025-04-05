@@ -219,3 +219,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 Created by Allaudin Ansari - feel free to contact me at [allu456654ansari@gmail.com]!
+
+## Demo
+
+### User Interface
+![Chatbot Interface](./docs/images/chatbot-interface.png)
+
+### Response Example
+![Legal Response](./docs/images/legal-response-example.png)
+
+
+
