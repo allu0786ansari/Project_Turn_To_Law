@@ -100,7 +100,7 @@ cp .env.example .env
 ### Database Setup
 ```bash
 # Make sure you have the vector database files in the Database directory
-# If not, run the inference.py script
+# If not, run the ingestion.py script
 cd backend
 python scripts/build_index.py
 ```
