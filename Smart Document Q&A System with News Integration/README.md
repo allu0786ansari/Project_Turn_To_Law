@@ -3,9 +3,9 @@
 A comprehensive legal document analysis system with integrated news summarization and fact-checking capabilities, designed to provide contextually relevant answers to legal queries while keeping users informed about related legal developments.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
-![React](https://img.shields.io/badge/react-18.0+-blue.svg)
-![FastAPI](https://img.shields.io/badge/fastapi-0.100.0+-blue.svg)
+![Python](https://img.shields.io/badge/python-blue.svg)
+![React](https://img.shields.io/badge/react-blue.svg)
+![FastAPI](https://img.shields.io/badge/fastapi-blue.svg)
 
 ## 📋 Table of Contents
 
@@ -17,6 +17,7 @@ A comprehensive legal document analysis system with integrated news summarizatio
 - [Usage Guide](#usage-guide)
 - [API Documentation](#api-documentation)
 - [Project Structure](#project-structure)
+- [Demo](#Demo)
 - [Future Improvements](#future-improvements)
 - [Contributing](#contributing)
 - [License](#license)
@@ -34,8 +35,6 @@ The Smart Document QA System with News Integration is an advanced tool designed 
 - **Contextual Understanding**: Sophisticated NLP to understand legal terminology and context
 - **Citation Generation**: Proper citations for all information provided
 - **Interactive UI**: User-friendly interface for document management and query processing
-- **Export Functionality**: Save results in various formats (PDF, DOCX, etc.)
-- **Search History**: Track and revisit previous queries and results
 
 ## 🏗️ System Architecture
 
@@ -53,24 +52,21 @@ These components are orchestrated through an agentic framework, allowing them to
 
 ### Backend
 - **FastAPI**: High-performance API framework
-- **LangChain/Crew.ai**: Orchestration of AI components
+- **LangChain**: Orchestration of AI components
 - **Sentence Transformers**: Document embedding and semantic search
 - **Hugging Face Transformers**: NLP models for text processing
-- **NewsAPI/GDELT**: For legal news aggregation
-- **SQLite/PostgreSQL**: Data persistence
 
 ### Frontend
 - **React**: UI framework
-- **TailwindCSS**: Styling
+- **CSS**: Styling
 - **Axios**: API client
 - **React Query**: Data fetching and caching
-- **Chart.js**: Data visualization
 
 ## 🚀 Installation and Setup
 
 ### Prerequisites
-- Python 3.9+
-- Node.js 16+
+- Python 
+- Node.js
 - npm or yarn
 - Git
 
@@ -115,29 +111,18 @@ cp .env.example .env
 # Terminal 1 - Backend
 cd backend
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-python main.py
+uvicorn main:app --reload
 
 # Terminal 2 - Frontend
 cd frontend
 npm start  # or yarn start
 ```
 
-#### Production Mode (Optional)
-```bash
-# Build frontend
-cd frontend
-npm run build  # or yarn build
-
-# Start backend (which will serve the built frontend)
-cd backend
-python main.py --prod
-```
-
 ## 📝 Usage Guide
 
 ### 1. Document Upload
 - Navigate to the upload section
-- Drag and drop your legal documents (supported formats: PDF, DOCX, TXT)
+- Drag and drop your legal documents (supported formats: PDF, DOCX, Image-jpg,jpeg,png)
 - Wait for processing completion
 
 ### 2. Asking Questions
@@ -151,12 +136,10 @@ python main.py --prod
 ### 3. News Integration
 - Navigate to the news tab to see all legal news related to your documents
 - Filter news by relevance, date, or source
-- Save important news items for future reference
 
 ### 4. Fact-Checking
 - Submit specific legal claims for verification
 - Review the verification results and sources
-- Export verification reports
 
 ## 🔌 API Documentation
 
@@ -164,12 +147,7 @@ Once the backend server is running, you can access the API documentation at:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-### Key Endpoints
 
-- `POST /api/documents/upload`: Upload legal documents
-- `POST /api/documents/query`: Query uploaded documents
-- `GET /api/news/related`: Get news related to a document or query
-- `POST /api/factcheck/verify`: Verify a legal claim
 
 ## 📂 Project Structure
 
@@ -244,4 +222,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Created by [Your Name] - feel free to contact me at [your.email@example.com]!
+Created by Allaudin Ansari - feel free to contact me at allu456654ansari@gmail.com
