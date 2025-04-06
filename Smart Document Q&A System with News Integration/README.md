@@ -189,7 +189,7 @@ smart_doc_qa/
 
 
 ### News Integration
-![News Feature](./docs/images/news-integration.png)
+![News Feature](https://github.com/allu0786ansari/Project_Turn_To_Law/blob/main/Smart%20Document%20Q%26A%20System%20with%20News%20Integration/backend/models/NewsFeedPage.png)
 
 ### Full Video Demonstration
 [![Watch the video demonstration](./docs/images/video-thumbnail.png)](https://youtu.be/your-video-id)
