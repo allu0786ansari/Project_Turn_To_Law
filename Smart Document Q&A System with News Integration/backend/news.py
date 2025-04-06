@@ -7,6 +7,7 @@ import json
 import os
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse, urljoin
+import re
 
 # Constants
 CACHE_FILE = "news_cache.json"
@@ -24,6 +25,20 @@ except Exception as e:
     print(f"Error configuring Gemini AI: {e}")
     exit(1)
 
+def clean_html_content(html_content: str) -> str:
+    """Clean HTML content and extract plain text."""
+    if not html_content:
+        return ""
+    
+    # Remove HTML tags using BeautifulSoup
+    soup = BeautifulSoup(html_content, 'html.parser')
+    # Get text content
+    text = soup.get_text(separator=' ', strip=True)
+    # Remove extra whitespace
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+
 def fetch_legal_news():
     """Fetch news from multiple sources."""
     news_sources = [
@@ -36,10 +51,20 @@ def fetch_legal_news():
         try:
             feed = feedparser.parse(source)
             for entry in feed.entries[:10]:  # Get top 10 from each source
+                # Clean the title and summary
+                clean_title = clean_html_content(entry.title)
+                clean_summary = clean_html_content(entry.summary)
+                
+                # Extract source from title if present
+                title_parts = clean_title.split(' - ')
+                main_title = title_parts[0]
+                source = title_parts[-1] if len(title_parts) > 1 else "Unknown Source"
+                
                 articles.append({
-                    "title": entry.title,
+                    "title": main_title,
                     "link": entry.link,
-                    "snippet": entry.summary,
+                    "snippet": clean_summary,
+                    "source": source
                 })
         except Exception as e:
             print(f"Error fetching from {source}: {e}")
@@ -68,6 +93,13 @@ def summarize_article(title: str, content: str) -> str:
 def get_indian_legal_news(keywords: list[str] | None = None) -> list[dict]:
     """Get legal news with optional keyword filtering."""
     try:
+        # Check cache first if no keywords
+        if not keywords and os.path.exists(CACHE_FILE):
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                cache = json.load(f)
+                if time.time() - cache.get('timestamp', 0) < CACHE_EXPIRY:
+                    return cache['articles']
+
         articles = fetch_legal_news()
         if not articles:
             print("No articles found")
@@ -83,14 +115,24 @@ def get_indian_legal_news(keywords: list[str] | None = None) -> list[dict]:
                     filtered_articles.append(article)
             articles = filtered_articles
 
-        # Process articles
+        # Process and format articles
         processed_articles = []
-        for article in articles[:5]:  # Limit to 5 articles
-            processed_articles.append({
+        for article in articles[:DEFAULT_NEWS_COUNT]:
+            formatted_article = {
                 "title": article['title'],
-                "summary": article['snippet'],  # Use snippet instead of summarization
-                "link": article['link']
-            })
+                "summary": article['snippet'],
+                "link": article['link'],
+                "source": article['source']
+            }
+            processed_articles.append(formatted_article)
+
+        # Cache results if no keywords were used
+        if not keywords:
+            with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'timestamp': time.time(),
+                    'articles': processed_articles
+                }, f, ensure_ascii=False, indent=2)
 
         return processed_articles
 
