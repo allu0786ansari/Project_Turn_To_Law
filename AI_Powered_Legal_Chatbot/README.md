@@ -163,7 +163,7 @@ Legal_Chatbot/
 
 ## ⚠️ Legal Disclaimer
 
-This chatbot is designed to provide preliminary legal information based on Indian legal codes, precedents, and regulations. However:
+This chatbot is designed to provide preliminary legal information based on Indian legal codes(Constitution of India, criminal law 2018, IPC 1860, criminal procedure 1973, it code...etc), precedents, and regulations. However:
 
 - The information provided by this chatbot does not constitute legal advice.
 - This chatbot is not a substitute for consultation with a qualified legal professional.
