@@ -117,15 +117,6 @@ npm run dev  # or yarn dev/start
 
 Open your browser and navigate to `http://localhost:5173` to access the chatbot interface.
 
-### Main Endpoints
-
-- `POST /api/chat`: Send a message to the chatbot
-  - Request body: `{"message": "What is the procedure for filing a PIL in India?"}`
-  - Response: `{"response": "...", "sources": [...], "disclaimer": "..."}`
-
-- `GET /api/history`: Get conversation history
-  - Response: `{"history": [...]}`
-
 ## 📂 Project Structure
 
 ```
