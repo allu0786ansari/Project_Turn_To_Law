@@ -15,7 +15,6 @@ A comprehensive legal document analysis system with integrated news summarizatio
 - [Tech Stack](#tech-stack)
 - [Installation and Setup](#installation-and-setup)
 - [Usage Guide](#usage-guide)
-- [API Documentation](#api-documentation)
 - [Project Structure](#project-structure)
 - [Demo](#Demo)
 - [Future Improvements](#future-improvements)
