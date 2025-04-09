@@ -85,11 +85,6 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env file with your API keys and configuration
-```
-
 ### Frontend Setup
 ```bash
 cd frontend
