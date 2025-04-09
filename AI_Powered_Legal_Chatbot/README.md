@@ -103,7 +103,7 @@ cp .env.example .env
 # Make sure you have the vector database files in the Database directory
 # If not, run the ingestion.py script
 cd backend
-python scripts/build_index.py
+python ingestion.py (store your pdf files inside data folder)
 ```
 
 ## 🖥️ Usage
