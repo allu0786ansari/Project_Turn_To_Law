@@ -15,6 +15,7 @@ A Retrieval-Augmented Generation (RAG) based legal assistant chatbot that provid
 - [Tech Stack](#tech-stack)
 - [Installation and Setup](#installation-and-setup)
 - [Usage](#usage)
+- [API Documentation](#API Documentation)
 - [Project Structure](#project-structure)
 - [Legal Disclaimer](#legal-disclaimer)
 - [Future Improvements](#future-improvements)
@@ -116,6 +117,12 @@ npm run dev  # or yarn dev/start
 ```
 
 Open your browser and navigate to `http://localhost:5173` to access the chatbot interface.
+
+## 🔌 API Documentation
+
+Once the backend server is running, you can access the API documentation at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
 ## 📂 Project Structure
 
