@@ -1,4 +1,4 @@
-# Indian Legal Assistant Chatbot
+# AI Powered Legal Chatbot
 
 A Retrieval-Augmented Generation (RAG) based legal assistant chatbot that provides accurate legal information and preliminary guidance to users based on Indian legal codes, precedents, and regulations.
 
