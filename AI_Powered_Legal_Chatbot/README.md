@@ -1,4 +1,4 @@
-# AI Powered Legal Chatbot
+# LexAI: Revolutionizing Legal Assistance with RAGPowered Chatbot for Indian Law
 
 A Retrieval-Augmented Generation (RAG) based legal assistant chatbot that provides accurate legal information and preliminary guidance to users based on Indian legal codes, precedents, and regulations.
 
